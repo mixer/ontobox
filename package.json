@@ -1,0 +1,35 @@
+{
+  "name": "ontobox",
+  "version": "0.1.0",
+  "description": "Minimal utility to detect mouse hovers onto and off of 'popup' boxes\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "karma start --single-run --browsers PhantomJS"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WatchBeam/ontobox.git"
+  },
+  "keywords": [
+    "javascript",
+    "browser",
+    "hover",
+    "box",
+    "amazon"
+  ],
+  "author": "Connor Peet <connor@peet.io>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/WatchBeam/ontobox/issues"
+  },
+  "homepage": "https://github.com/WatchBeam/ontobox#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "karma": "^0.13.22",
+    "karma-chai": "^0.1.0",
+    "karma-mocha": "^1.0.1",
+    "karma-phantomjs-launcher": "^1.0.0",
+    "mocha": "^2.4.5",
+    "phantomjs-prebuilt": "^2.1.7"
+  }
+}
