@@ -29,6 +29,7 @@ describe('ontobox', function () {
         el = document.createElement('div');
         el.style.width = '100px';
         el.style.height = '100px';
+        el.style.margin = '100px';
         document.body.appendChild(el);
     });
 
@@ -50,40 +51,61 @@ describe('ontobox', function () {
         });
 
         it('remains open when clicks are inside', function () {
-            down(50, 50);
+            down(150, 150);
             expect(closed).to.be.false;
         });
     });
 
     describe('movement', function () {
-        it('stays open when moving horizontally', function () {
-            move(180, 50);
-            move(130, 50);
-            move(75, 50);
-            expect(closed).to.be.false;
-        });
+        var granularity = 30;
+        var distance = 100;
+        var center = [150, 150];
 
-        it('stays open when moving diagonally', function () {
-            move(200, 200);
-            move(180, 180);
-            move(120, 50);
-            move(50, 120);
-            move(50, 50);
-            expect(closed).to.be.false;
-        });
+        function moveToRad(rad) {
+            move(Math.cos(rad) * distance + center[0], Math.sin(rad) * distance + center[1]);
+        }
 
-        it('closes when moving away from the box', function () {
-            move(180, 50);
-            move(150, 150);
-            expect(closed).to.be.true;
-        });
+        function radToDeg(rad) {
+            return Math.round(rad / Math.PI * 180);
+        }
+
+        for (var i = 0; i < 360; i += granularity) {
+            (function (angle) {
+                var rad = Math.PI * (angle / 180);
+
+                it('stays open when moving at ' + radToDeg(rad) + ' degrees', function () {
+                    var x = Math.cos(rad) * distance + center[0];
+                    var y = Math.sin(rad) * distance + center[1];
+                    var steps = 10;
+                    move(x, y);
+
+                    for (var k = 0; k < steps; k++) {
+                        move(x, y);
+                        x += Math.cos(rad + Math.PI) * (distance / steps);
+                        y += Math.sin(rad + Math.PI) * (distance / steps);
+                    }
+
+                    expect(closed).to.be.false;
+                });
+
+                var directions = 8;
+                for (var i = 1; i < directions; i++) {
+                    (function (target) {
+                        it('closes when moving +' + radToDeg(target) + ' away from ' + radToDeg(rad), function () {
+                            moveToRad(rad);
+                            moveToRad(rad + target);
+                            expect(closed).to.be.true;
+                        });
+                    })(Math.PI * 2 / directions * i);
+                }
+            })(i);
+        }
 
         it('closes after hovering over the box and moving a threshold away', function () {
-            move(180, 50);
-            move(75, 50);
-            move(75, 110);
+            move(0, 0);
+            move(150, 150);
             expect(closed).to.be.false;
-            move(75, 160);
+            move(0, 0);
             expect(closed).to.be.true;
         });
     });

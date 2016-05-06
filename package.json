@@ -2,7 +2,7 @@
   "name": "ontobox",
   "version": "0.1.0",
   "description": "Minimal utility to detect mouse hovers onto and off of 'popup' boxes\"",
-  "main": "index.js",
+  "main": "ontobox.js",
   "scripts": {
     "test": "karma start --single-run --browsers PhantomJS"
   },

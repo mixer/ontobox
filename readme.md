@@ -2,7 +2,7 @@
 
 This is a very light implementation of the algorithm behind [Amazon's "mega dropdown"](http://bjk5.com/post/44698559168/breaking-down-amazons-mega-dropdown) tailored at more generic use cases--not just menus. It provides an object that simply takes an object to attach to, and lets you know when it should be closed.
 
-It is compatible with but does not depend on jQuery, or any other external libraries, and compiles down to under 1 KB in size.
+It is compatible with but does not depend on jQuery, or any other external libraries, and compresses down under 800 bytes.
 
 ### Example
 

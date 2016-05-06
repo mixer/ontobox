@@ -17,13 +17,23 @@
      */
     function unwrapJQuery($el) {
         if (typeof jQuery !== 'undefined' && $el instanceof jQuery) {
-            return el.get(0);
+            return $el.get(0);
         }
         if ($el instanceof Node) {
             return $el;
         }
 
         return undefined;
+    }
+
+    /**
+     * Computes the dot product of the two vectors.
+     * @param  {[Number, Number]} a
+     * @param  {[Number, Number]} b
+     * @return {Number}
+     */
+    function dot(a, b) {
+        return (a[0] * b[0]) + (a[1] * b[1]);
     }
 
     /**
@@ -41,11 +51,11 @@
         var v1 = [b[0]-a[0], b[1]-a[1]];
         var v2 = [point[0]-a[0], point[1]-a[1]];
 
-        var dot00 = (v0[0] * v0[0]) + (v0[1] * v0[1]);
-        var dot01 = (v0[0] * v1[0]) + (v0[1] * v1[1]);
-        var dot02 = (v0[0] * v2[0]) + (v0[1] * v2[1]);
-        var dot11 = (v1[0] * v1[0]) + (v1[1] * v1[1]);
-        var dot12 = (v1[0] * v2[0]) + (v1[1] * v2[1]);
+        var dot00 = dot(v0, v0);
+        var dot01 = dot(v0, v1);
+        var dot02 = dot(v0, v2);
+        var dot11 = dot(v1, v1);
+        var dot12 = dot(v1, v2);
 
         var invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
 
@@ -56,14 +66,26 @@
     }
 
     /**
+     * Returns the euclidean distance to the point.
+     * @param  {[Number, Number]} a
+     * @param  {[Number, Number]} b
+     * @return {Nubmer}
+     */
+    function distance (a, b) {
+        var dx = a[0] - b[0];
+        var dy = a[1] - b[1];
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    /**
      * @enum {Number}
      */
-    var states = Object.freeze({
+    var states = {
         // the user opened the box but did not yet hover over it
         opened: 0,
         // the user hovered over the box
         hovered: 1,
-    });
+    };
 
 
     /**
@@ -147,19 +169,28 @@
                 return;
             }
 
-            // otherwise, we ensure that the provided point is in at least
+            // Otherwise, we ensure that the provided point is in at least
             // one of the triangles formed between the start point and
-            // the corners of the box
+            // the corners of the box.
+            //
+            // In this array, it's important that each corner is adjacent to
+            // the ones before and after it (wrapping around). This lets
+            // us 'sketch' that lovely triangle area from the article with
+            // very simple logic.
             var corners = [
                 [this._box.left, this._box.top],
                 [this._box.left, this._box.bottom],
-                [this._box.right, this._box.top],
                 [this._box.right, this._box.bottom],
+                [this._box.right, this._box.top],
             ];
 
-            var inside = false;
-            for (var i = 1; i < corners.length; i++) {
-                inside = inside || inTriangle(point, start, corners[i], corners[i - 1]);
+            var inside = distance(start, point) < 5;
+            for (var i = 0; i < corners.length && !inside; i++) {
+                inside = inTriangle(point,
+                    start,
+                    corners[i],
+                    corners[(i + 1) % corners.length]
+                );
             }
 
             if (!inside) {
@@ -173,8 +204,6 @@
             }
 
         break;
-        default:
-            throw new Error('Unknown state ' + this._state);
         }
     };
 
@@ -200,6 +229,7 @@
     /**
      * Recalculates the bounding box of the provided element. Should be
      * called if you suspect its size may have changed.
+     * @export
      */
     OntoBox.prototype.recalculate = function () {
         this._box = this._node.getBoundingClientRect();
@@ -208,6 +238,7 @@
 
     /**
      * Destroys resources and listeners associated with the box.
+     * @export
      */
     OntoBox.prototype.destroy = function () {
         this._destroy();
