@@ -1,6 +1,6 @@
 {
   "name": "ontobox",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Minimal utility to detect mouse hovers onto and off of 'popup' boxes\"",
   "main": "ontobox.js",
   "scripts": {
