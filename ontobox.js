@@ -84,7 +84,7 @@
         // the user opened the box but did not yet hover over it
         opened: 0,
         // the user hovered over the box
-        hovered: 1,
+        hovered: 1
     };
 
 
